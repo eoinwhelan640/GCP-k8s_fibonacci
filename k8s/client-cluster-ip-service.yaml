@@ -1,0 +1,14 @@
+apiVersion: v1 
+kind: Service
+metadata:
+  name: client-cluster-ip-service
+spec:
+  type: ClusterIP 
+  selector:
+    app: web
+  ports:
+  # to get at port 3000 inside the container (targetPort), you're gonna get at port 3000 on the service
+  - port: 3000
+    # port on target pod we're providing access to
+    targetPort: 3000
+    # No nodePort for clusterIP, nothing from outside can access it

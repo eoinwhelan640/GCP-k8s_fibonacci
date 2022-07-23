@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-cluster-ip-service
+spec:
+  type: ClusterIP
+  selector:
+    component: redis
+  ports:
+    # what set of ports this service is managing
+    # Any outside k8s object (still within node) that is trying to get at our redis pod will access
+    # this service first on port 6379
+    - port: 6379
+      # after it goes through the service, it's gonna connect to port 6379 inside of container
+      # we have matched port to targetPort here, 6379 being redis default exposed port
+      # which we have configured in deployment file
+      targetPort: 6379

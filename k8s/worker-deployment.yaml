@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: worker
+  template:
+    metadata:
+      labels:
+        component: worker
+    spec:
+      containers:
+      - name: worker
+        image: stephengrider/multi-worker
+        # Dont need to assign any ports or services, because worker will not receive any requests
+        # it will only reach out to other apps, wont have any direct traffic to it trying to get info out of it
+        # Nothing will make a request into the worker pod, so no ports or services
+        # services only for requests going into pod
+        # env vars
+        env:
+          # tell container how it can reach out and connect to redis (clusterIP)
+          - name: REDIS_HOST
+            value: redis-cluster-ip-service
+          - name: REDIS_PORT
+            value: '6379'

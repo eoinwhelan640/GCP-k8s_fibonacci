@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: server
+  template:
+    metadata:
+      labels:
+        app: server
+    spec:
+      containers:
+        - name: server
+          # for server image, we need to tell it how to connect to postgres & redis, it's expecting env vars to do this
+          image: stephengrider/multi-server
+          ports:
+            - containerPort: 5000
+          env:
+            - name: REDIS_HOST
+              value: redis-cluster-ip-service
+            - name: REDIS_PORT
+              value: '6379'
+            - name: PGUSER
+              value: postgres
+            - name: PGHOST
+              value: postgres-cluster-ip-service
+            - name: PGPORT
+              value: '5432'
+            - name: PGDATABASE
+              value: postgres
+            # our multi-server image is looking for a PGPASSWORD env variable, this could have been some other name, this isnt specifically related to postgres 
+            - name: PGPASSWORD
+              # For a secret value to act as env variable, need to do it this way
+              valueFrom:
+                secretKeyRef:
+                  name: pgpassword
+                  # When creating a k8s secret, could have multiple key value env variables declared. need the key so we know what we're referring to
+                  # PGPASSWORD here and the one above are unrelated, just happen to be same name
+                  key: PG_PASS

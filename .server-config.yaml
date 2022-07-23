@@ -1,0 +1,33 @@
+# Format for combining multiple yamls into one file
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: server
+  template:
+    metadata:
+      labels:
+        app: server
+    spec:
+      containers:
+        - name: server
+          image: stephengrider/multi-server
+          ports:
+          - containerPort: 5000
+# combine multiple objects into one yaml by separating with three dashes ---
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: server-cluster-ip-service
+spec:
+  type: ClusterIP
+  selector:
+    app: server
+  ports:
+  - port: 5000
+    targetPort: 5000

@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: db-persistent-volume-claim
+spec:
+  accessModes:
+    # Determines access rights to the slice of storage we're creating
+    # ReadWriteOnce - can be used by single node
+    # ReadOnlyMany - many nodes can read the data only
+    # ReadWriteMany - Can be read & written by multiple nodes
+    # Whichever we choose, k8s needs to find an instnace of storage that allows this mode
+    - ReadWriteOnce
+  resources:
+    requests:
+      # k8s needs to find a storage option either provisioned ahead of time or made on the fly of 2gb
+      storage: 2Gi
+  # Theres a bunch of other settings but we're relying on default settings so dont have to state them
+  # eg VolumeMode:
+
+# what storage we are pulling from for our volume claim. Ie where is the disk space we're segmenting coming from?
+# on a cloud provider it'll be some service eg AWS block store or Google Cloud Persistent Disk. on local machine its just our harddrive
+# our PVC provision takes disk from here to make our volume. usually bets to use default option for whatever provider we're using, so can omit this tag a lot of the time
+# worth knowing that by default when we use a cloud provider with k8s, one of these default storage options is initialised for us
+# same as the S3 bucket was initialised when using elastic benastalk on aws 
+#storageClassname:

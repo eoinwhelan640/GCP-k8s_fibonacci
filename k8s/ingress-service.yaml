@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-service
+  # annotations is for specifying higher level config around ingress object we're creating
+  annotations: 
+    # this tells k8s we want to create an ingress controller based on nginx project
+    kubernetes.io/ingress.class: 'nginx'
+    nginx.ingress.kubernetes.io/use-regex: 'true'
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  # rules are saying there are two possible paths we can macth traffic to
+  rules:
+    - http:
+        paths:
+        # this is saying that if we get a request on path /, then send that to
+        # whatever pod is governed by client-cluster-ip-service
+          - path: /?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: client-cluster-ip-service
+                port: 
+                  number: 3000
+          # if request comes in with leading route name /api, then it goes to pods controlled by serverclusterip
+          - path: /api/?(.*)
+            pathType: Prefix
+            backend:
+              service: 
+                name: server-cluster-ip-service
+                port: 
+                  number: 5000
