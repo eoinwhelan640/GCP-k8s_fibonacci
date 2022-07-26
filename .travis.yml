@@ -23,7 +23,7 @@ before_install:
   # we obviously need to create the service account json and put the credentials in there as env variables encrypted .
   # Do this by encrypting with travis CI CLI, download json from google, encrypt it and upload in git repo.
   # as mentioned above with openssl we'll decrypt and use raw json info to autheticate 
-  - gcloud auth activate-service-account --key-file k8s-fibonacci-357421-743045f4caf3.json.enc
+  - gcloud auth activate-service-account --key-file k8s-fibonacci-357421-743045f4caf3.json
   # tell gcloud what zone and project to operate on
   # remember when using cloud shell within gcp, need to run these 3 there as well to configure it the first time you use it with a new cluster
   # use relevant names/zones etc each time, but commands on travis will match commands entered into browser version
