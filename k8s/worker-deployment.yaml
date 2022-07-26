@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: worker
-        image: stephengrider/multi-worker
+        image: eoinwhelan64/fibonacci-worker:k8s
         # Dont need to assign any ports or services, because worker will not receive any requests
         # it will only reach out to other apps, wont have any direct traffic to it trying to get info out of it
         # Nothing will make a request into the worker pod, so no ports or services

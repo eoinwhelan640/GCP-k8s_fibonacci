@@ -14,7 +14,6 @@ spec:
     spec:
       containers:
         - name: client
-          # TODO - change this back to my own image
-          image: stephengrider/multi-client
+          image: eoinwhelan64/fibonacci-client:k8s
           ports:
             - containerPort: 3000
