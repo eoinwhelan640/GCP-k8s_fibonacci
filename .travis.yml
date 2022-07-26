@@ -1,0 +1,48 @@
+sudo: required
+services:
+  - docker
+env:
+  global:
+    # determine current commit sha and make the env variable
+    - GIT_SHA=$(git rev-parse HEAD)
+    # turn off any prompts from the google SDK during the build, else the whole thing hangs waiting for input
+    - CLOUDSDK_CORE_DISABLE_PROMPTS=1
+before_install:
+  # obtained when we encrypted the cloud service account json
+  # This command will decrypt our file and place it into the project directory as regular json
+  - openssl aes-256-cbc -K $encrypted_f4c3e4964776_key -iv $encrypted_f4c3e4964776_iv -in k8s-fibonacci-357421-743045f4caf3.json.enc -out k8s-fibonacci-357421-743045f4caf3.json -d
+  # downlaod and install google cloud sdk
+  # install locally on instance assigned to us on travis ci
+  - curl https://sdk.cloud.google.com | bash > /dev/null;
+  # Modify the shell with config set up in default sdk file
+  - source $HOME/google-cloud-sdk/path.bash.inc
+  # Make the instance install the kubectl command so it can be used
+  - gcloud components update kubectl
+  # Authenticate with google cloud
+  # This replaces IAM user on AWS. On gcp, we use a service account instead, giving it access to our cloud apps
+  # we obviously need to create the service account json and put the credentials in there as env variables encrypted .
+  # Do this by encrypting with travis CI CLI, download json from google, encrypt it and upload in git repo.
+  # as mentioned above with openssl we'll decrypt and use raw json info to autheticate 
+  - gcloud auth activate-service-account --key-file k8s-fibonacci-357421-743045f4caf3.json.enc
+  # tell gcloud what zone and project to operate on
+  # remember when using cloud shell within gcp, need to run these 3 there as well to configure it the first time you use it with a new cluster
+  # use relevant names/zones etc each time, but commands on travis will match commands entered into browser version
+  - gcloud config set project k8s-fibonacci-357421
+  - gcloud config set compute/zone us-west1-a
+  # tell gcloud what cluster it should be working with if we issue any kubectl commands
+  # remember this is cluster name, not project name 
+  - gcloud container clusters get-credentials fibonacci-cluster
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker build -t eoinwhelan64/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  # Run our tests 
+  - docker run -e CI=true eoinwhelan64/react-test npm test
+
+deploy:
+  # tell travis we're gonna use our own custom script for the deployment 
+  provider: script
+  script: bash ./deploy.sh
+  # only deploy on master merges/build
+  on:
+    branch: master
