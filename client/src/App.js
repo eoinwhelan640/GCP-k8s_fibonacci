@@ -13,14 +13,14 @@ function App() {
           <img src={logo} className="App-logo" alt="logo" />
           <a
             className="App-link"
-            href="https://reactjs.org"
+            href="https://github.com/eoinwhelan640"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Learn React 3
+            Project Home
           </a>
           <Link to="/">Home</Link>
-          <Link to="/otherpage">Other Page</Link>
+          <Link to="/otherpage">Explain Fibonacci to me</Link>
         </header>
         <div>
           <Route exact path="/" component={Fib} />
