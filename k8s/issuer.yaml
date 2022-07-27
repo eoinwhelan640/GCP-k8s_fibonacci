@@ -1,11 +1,15 @@
+# We installed certmanager, so find this object in the apiVersion made by certmanager
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
   name: letsencrypt-prod
 spec:
   acme:
+    # where should certmanager reach out to try establish the verification process
+    # essentially a link to letsencrypt api setting up the communication back and forth
     server: https://acme-v02.api.letsencrypt.org/directory
     email: "whelan.eoin6@gmail.com"
+    # letsencrypt will send over a secret key attached to our record with lets encrypt and is part of authentication process
     privateKeySecretRef:
       name: letsencrypt-prod
     solvers:
