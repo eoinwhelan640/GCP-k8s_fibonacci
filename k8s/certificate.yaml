@@ -1,25 +1,14 @@
 apiVersion: cert-manager.io/v1
+
 kind: Certificate
 metadata:
   name: bigdaddyroller-com-tls
 spec:
-  # secret name species where it should be stored after obtained by cert manager
   secretName: bigdaddyroller-com
-  issuerRef: 
+  issuerRef:
     name: letsencrypt-prod
     kind: ClusterIssuer
-  # this validates our domain name, will be on the cert, cert is good for this domain
   commonName: bigdaddyroller.com
-  # list of all domains that should be associated with the certificate
-  # if user goes to any of these domains, the cert covers them
   dnsNames:
     - bigdaddyroller.com
     - www.bigdaddyroller.com
-  # acme:
-  #   config:
-  #     - http01:
-  #         ingressClass: nginx
-  #       # the verififxation process will try to hit these domains to verify the access is valid
-  #       domains:
-  #         - bigdaddyroller.com
-  #         - www.bigdaddyroller.com
