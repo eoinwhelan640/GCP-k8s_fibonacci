@@ -10,7 +10,7 @@ env:
 before_install:
   # obtained when we encrypted the cloud service account json
   # This command will decrypt our file and place it into the project directory as regular json
-  - openssl aes-256-cbc -K $encrypted_f4c3e4964776_key -iv $encrypted_f4c3e4964776_iv -in k8s-fibonacci-357421-743045f4caf3.json.enc -out k8s-fibonacci-357421-743045f4caf3.json -d
+  - openssl aes-256-cbc -K $encrypted_f4c3e4964776_key -iv $encrypted_f4c3e4964776_iv -in encrypt/k8s-fibonacci-357421-743045f4caf3.json.enc -out k8s-fibonacci-357421-743045f4caf3.json -d
   # downlaod and install google cloud sdk
   # install locally on instance assigned to us on travis ci
   - curl https://sdk.cloud.google.com | bash > /dev/null;
