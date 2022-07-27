@@ -1,10 +1,10 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: k8s-multi-com-tls
+  name: bigdaddyroller-com-tls
 spec:
   # secret name species where it should be stored after obtained by cert manager
-  secretName: k8s-multi-com
+  secretName: bigdaddyroller-com
   issuerRef: 
     name: letsencrypt-prod
     kind: ClusterIssuer
@@ -15,11 +15,11 @@ spec:
   dnsNames:
     - bigdaddyroller.com
     - www.bigdaddyroller.com
-  acme:
-    config:
-      - http01:
-          ingressClass: nginx
-        # the verififxation process will try to hit these domains to verify the access is valid
-        domains:
-          - bigdaddyroller.com
-          - www.bigdaddyroller.com
+  # acme:
+  #   config:
+  #     - http01:
+  #         ingressClass: nginx
+  #       # the verififxation process will try to hit these domains to verify the access is valid
+  #       domains:
+  #         - bigdaddyroller.com
+  #         - www.bigdaddyroller.com

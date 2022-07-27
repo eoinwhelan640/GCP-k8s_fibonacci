@@ -6,9 +6,9 @@ metadata:
 spec:
   acme:
     # where should certmanager reach out to try establish the verification process
-    # essentiall a link to letsencrypt api setting up the communication back and forth
+    # essentially a link to letsencrypt api setting up the communication back and forth
     server: https://acme-v02.api.letsencrypt.org/directory
-    email: 'whelan.eoin6@gmail.com'
+    email: "whelan.eoin6@gmail.com"
     # letsencrypt will send over a secret key attached to our record with lets encrypt and is part of authentication process
     privateKeySecretRef:
       name: letsencrypt-prod
