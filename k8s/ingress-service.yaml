@@ -23,7 +23,7 @@ spec:
   # rules are saying there are two possible paths we can macth traffic to
   rules:
     - host: bigdaddyroller.com
-      http:
+    - http:
         paths:
         # this is saying that if we get a request on path /, then send that to
         # whatever pod is governed by client-cluster-ip-service
@@ -43,7 +43,7 @@ spec:
                 port: 
                   number: 5000
     - host: www.bigdaddyroller.com
-      http:
+    - http:
         paths:
         # this is saying that if we get a request on path /, then send that to
         # whatever pod is governed by client-cluster-ip-service
