@@ -15,6 +15,7 @@ spec:
   dnsNames:
     - bigdaddyroller.com
     - www.bigdaddyroller.com
+  # deprecated
   # acme:
   #   config:
   #     - http01:

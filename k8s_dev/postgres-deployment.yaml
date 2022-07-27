@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deployment
+spec:
+  # never have more than one db active unless you've set up communication between the two
+  # or is a recipe for disaster, eg two procs saving to hdb and messing up sym etc
+  replicas: 1
+  selector:
+    matchLabels:
+      trait: postgres
+  template:
+    metadata:
+      labels:
+        trait: postgres
+    spec:
+      # make k8s go over to local harddrive or cloud provider and source the relevant slice of storage
+      # This is allocating the storage, need to also assign it for use in containers
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+          # copy the name form the volume claim file
+            claimName: db-persistent-volume-claim
+      containers:
+      - name: postgres
+        image: postgres
+        ports:
+          - containerPort: 5432
+        # We provisioned the storage above, this is saying how we wnat it to be used inside my containers
+        volumeMounts:
+          # find the storage we provisioned in volumes section
+          - name: postgres-storage
+            # where inside of container should this storage be made available
+            # folder path here, anything stored here on container is actually being stored in our provisioned volume 
+            # data dir postgres uses for storing data on harddrive - default for postgres
+            mountPath: /var/lib/postgresql/data
+            # subPath means any data stored in mountPath is stored in a folder called "postgres" within the volume we allocated 
+            # postgres specific feature, if it opens up on a mount it wont wanna save data unless there is a postgres folder
+            subPath: postgres
+        env:
+          # if postgres is password protected we need to let it know by having this variable exist
+          # so tell postgres to make use of password any time someone connects
+          # and pull the password we set from the secret object
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef: 
+                name: pgpassword
+                key: PG_PASS
