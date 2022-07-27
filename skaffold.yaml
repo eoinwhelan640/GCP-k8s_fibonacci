@@ -1,0 +1,55 @@
+apiVersion: skaffold/v2beta12
+kind: Config
+# List out all the images/deployments we want skaffold to manage
+# Note - remember this uses pods, so when I run on dev there will be a container per pod i'm running (about 3) so loads of output
+deploy:
+  kubectl:
+    # list all config files we want skaffold to manage for us, ie k8s yamls
+    manifests:
+    # anytime we start up skaffold, its going to attempt to apply that config file to the k8s cluster
+    # also using config above, skaffold watches the files above, and if detects any changes and injects them to the container
+      # Be warned, skaffold will kills these objects when you stop it, so never tie any db or persisted data/volumes to skaffold
+      #- ./k8s_dev/*
+       - ./k8s/client-deployment.yaml
+       - ./k8s/server-deployment.yaml
+       - ./k8s/worker-deployment.yaml
+build:
+  local:
+    # by default skaffold will push images to docker hub when new image is built
+    # but in local dev we usually dont want this, push ourselves when we know it works
+    push: false
+  # new container we want skaffold to manage, skaffold calls them artifacts
+  artifacts:
+    - image: eoinwhelan64/fibonacci-client
+      context: client
+      # building a dev mode app so use dev dockerfile
+      docker:
+        dockerfile: Dockerfile.dev
+      # want to use mode 2 of the two modes skaffold oeprates in
+      # our app is configured to automatically update itself, so we can use mode 2 easily
+      sync:
+        manual:
+        # what files skaffold should use when trying to use mode #2
+        # any java, css or html, inject it into the running container/pod
+          - src: "src/**/*.js"
+            dest: .
+          - src: "src/**/*.css"
+            dest: .
+          - src: "src/**/*.html"
+            dest: .
+    - image: eoinwhelan64/fibonacci-worker
+      context: worker
+      docker:
+        dockerfile: Dockerfile.dev
+      sync:
+        manual:
+          - src: "*.js"
+            dest: .
+    - image: eoinwhelan64/fibonacci-server
+      context: server
+      docker:
+        dockerfile: Dockerfile.dev
+      sync:
+        manual:
+          - src: "*.js"
+            dest: .
